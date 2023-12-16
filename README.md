@@ -1,3 +1,3 @@
 # Chorus-Plugin
 
-![chorus](https://github.com/lachesis17/Chorus-Plugin/assets/78860436/b9cac86c-dbc4-4f9b-be7e-95a2c296132a)
+![chorus](https://github.com/lachesis17/Chorus-Plugin/assets/78860436/f3433ae2-7d8c-4130-b9ce-ee6b2a1d1185)
