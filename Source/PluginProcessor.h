@@ -187,9 +187,10 @@ public:
 private:
 	void updateFilters();
 	void applyChorus(int sample, bool left);
+	float smoothValues(float current, juce::LinearSmoothedValue<float> smoothed, float next);
 
 	MonoChain leftChain, rightChain;
-	juce::LinearSmoothedValue<float> smoothedDelayTimeLeft, smoothedDelayTimeRight;
+	juce::LinearSmoothedValue<float> smoothedDelayTimeLeft, smoothedDelayTimeRight, smoothedChorusDepth, smoothedChorusRate;
 
 	CircularBuffer<float> circBuffLeft;
 	CircularBuffer<float> circBuffRight;
@@ -199,7 +200,8 @@ private:
 	int writeIndexRight = 0;
 	float lastDelayTimeLeft = 100.0f;
 	float lastDelayTimeRight = 100.0f;
-	float coeff = 0;
+	float coeff;
+	float coeff_chrs;
 	float delayTimeLeft;
 	float delayTimeRight;
 

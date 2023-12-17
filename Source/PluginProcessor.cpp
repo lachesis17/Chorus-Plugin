@@ -104,9 +104,12 @@ void ChorusAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     currentSampleRate = getSampleRate();
 
     coeff = 1.0f - std::exp( -1.0f / (0.1f * currentSampleRate)); // tape delay effect : one-pole filter
+    coeff_chrs = 1.0f - std::exp( -1.0f / (0.01f * currentSampleRate));
 
     smoothedDelayTimeLeft.reset(currentSampleRate, 0.3f);
     smoothedDelayTimeRight.reset(currentSampleRate, 0.3f);
+    smoothedChorusDepth.reset(currentSampleRate, 0.005);
+    smoothedChorusRate.reset(currentSampleRate, 0.005);
 
     circBuffLeft.createCircularBuffer(2 * currentSampleRate);   // doubled or limited to 1365ms @ 48k
     circBuffRight.createCircularBuffer(2 * currentSampleRate);
@@ -158,12 +161,17 @@ void ChorusAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
 
     auto chainsettings = getChainSettings(apvts);
     float dryWet = 1.f;
-    chorusRate = chainsettings.rate;
     bool dualDelay = chainsettings.dualDelay;
     bool chorus = chainsettings.chorus;
-    chorusDepth = chainsettings.depth;
+    float newChorusDepth = chainsettings.depth;
+    float newChorusRate = chainsettings.rate;
     float newDelayTimeLeft = chainsettings.delayTimeLeft;
     float newDelayTimeRight = dualDelay ? chainsettings.delayTimeRight : chainsettings.delayTimeLeft;
+
+    smoothedChorusDepth.setTargetValue(newChorusDepth);
+    chorusDepth = smoothedChorusDepth.getNextValue() + ((smoothedChorusDepth.getNextValue() - chorusDepth) * coeff_chrs); 
+    smoothedChorusRate.setTargetValue(newChorusRate);
+    chorusRate = smoothedChorusRate.getNextValue() + ((smoothedChorusRate.getNextValue() - chorusRate) * coeff_chrs); 
 
     for (int channel = 0; channel < numChannels; ++channel)
     {
@@ -284,6 +292,13 @@ void ChorusAudioProcessor::applyChorus(int sample, bool left)
     while (chorusPhase >= 2.0 * juce::MathConstants<float>::pi)
         chorusPhase -= 2.0 * juce::MathConstants<float>::pi;
 }
+
+// float ChorusAudioProcessor::smoothValues(float current, juce::LinearSmoothedValue<float> smoothed, float next)
+// { // need to fix this...
+//     smoothed.setTargetValue(next);
+//     current = smoothed.getNextValue() + ((smoothed.getNextValue() - current) * coeff); 
+//     return current;
+// }
 
 void ChorusAudioProcessor::updateFilters()
 {
