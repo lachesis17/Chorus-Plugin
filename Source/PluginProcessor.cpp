@@ -22,6 +22,10 @@ ChorusAudioProcessor::ChorusAudioProcessor()
                        ), apvts (*this, nullptr, "Parameters", createParameters())
 #endif
 {
+    PropertiesFile::Options options;
+    options.applicationName = "Chorus-Plugin";
+    options.folderName = "lachesis17";
+    appProperties.setStorageParameters(options);
 }
 
 ChorusAudioProcessor::~ChorusAudioProcessor()
