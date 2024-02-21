@@ -11,3 +11,5 @@
 - [ ] Add depth & rate per channel
 - [ ] Add toggle for depth & rate per channel (single default)
 - [ ] Fix popping on toggling states (tukey window)
+
+Copyright (c) 2023-2024, lachesis17 - All rights reserved.
